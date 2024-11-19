@@ -1,0 +1,35 @@
+import { Customer } from "@/app/(application)/(routes)/customers/_data/schema";
+import { formatNumberToIndianReadble, reverseDateString, uppercaseFirstCharacter } from "./utils"
+import { Trip } from "@/app/(application)/(routes)/trips/_data/schema";
+
+type User = {
+  personalDetails: {
+    salutation: "mr" | "mrs" | "ms";
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    password: string;
+    sign?: string;
+  };
+  companyDetails: {
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    gstNumber: string;
+    companyLogo?: string;
+  };
+};
+
+type TripReportTemplateProps = {
+  user: User;
+  trip: Trip;
+  customer: Customer;
+}
+
+export function tripReportTemplate(data: TripReportTemplateProps) {
+  const { user, trip, customer } = data;
+
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Trip Report</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"><style>:root{--body-font:"Inter",sans-serif}body{--bs-font-sans-serif:"Inter",sans-serif;--bs-body-font-family:var(--bs-font-sans-serif);--bs-body-font-size:0.6rem;--bs-body-font-weight:400;--bs-body-line-height:2;--bs-body-color:#41403e;--bs-primary:#0070e4;--bs-primary-rgb:0,112,228;--bs-border-color:#eeeeee}</style></head><body><section id="invoice"><div class="m-5"><div class="text-center"><img src="${user.companyDetails.companyLogo}" alt="${user.companyDetails.name}"></div><div class="text-center border-top border-bottom my-5 py-3"><h2 class="display-5 fw-bold">Trip Report</h2><p class="text-muted">Trip Report for ${customer.personalDetails.firstName} ${customer.personalDetails.lastName}</p><p class="text-muted">Trip Date: ${reverseDateString(trip.primaryDetails.date)}</p><p class="text-muted">Trip Status: ${trip.primaryDetails.status}</p></div><div class="d-md-flex justify-content-between"><div><p class="text-primary">Delivery</p><ul class="list-unstyled"><li>${trip.primaryDetails.from} &rarr; ${trip.primaryDetails.to}</li></ul></div><div class="mt-5 mt-md-0"><p class="text-primary">Driver</p><ul class="list-unstyled"><li>${uppercaseFirstCharacter(trip.driverDetails.salutation)}. ${trip.driverDetails.firstName} ${trip.driverDetails.lastName}</li><li>${trip.driverDetails.phone}</li></ul></div></div><table class="table border my-5"><thead><tr class="bg-primary-subtle"><th scope="col">Units</th><th scope="col">Rate</th><th scope="col">Subtotal</th><th scope="col">GST</th><th scope="col">Total</th><th scope="col">Advance</th><th scope="col">Commission</th><th scope="col">TSD/Shortage</th><th scope="col">Due</th><th scope="col">Courier</th></tr></thead><tbody><tr><td>${formatNumberToIndianReadble(trip.financeDetails.units)}</td><td>₹ ${formatNumberToIndianReadble(trip.financeDetails.rate)}</td><td>₹ ${formatNumberToIndianReadble(trip.financeDetails.subTotalAmount)}</td><td>₹ ${formatNumberToIndianReadble(trip.financeDetails.gstAmount)}</td><td>₹ ${formatNumberToIndianReadble(trip.financeDetails.totalAmount)}</td><td>₹ ${formatNumberToIndianReadble(trip.financeDetails.advanceAmount)}</td><td>₹ ${formatNumberToIndianReadble(trip.financeDetails.commissionAmount)}</td><td>₹ ${formatNumberToIndianReadble(trip.financeDetails.tsdShortageAmount)}</td><td>₹ ${formatNumberToIndianReadble(trip.financeDetails.dueAmount)}</td><td>${trip.financeDetails.courier}</td></tr></tbody></table><table class="table border my-5"><thead><tr class="bg-primary-subtle"><th scope="col">Sr. No.</th><th scope="col">Title</th><th scope="col">Amount</th><th scope="col">Mode</th><th scope="col">Date</th></tr></thead><tbody>${trip.incomeDetails?.items?.map((item, index) => `<tr><td>${index + 1}</td><td>₹ ${item.title}</td><td>₹ ${formatNumberToIndianReadble(item.amount)}</td><td>₹ ${item.mode}</td><td>${reverseDateString(item.date)}</td></tr>`).join("\n")}<tr><td colspan="2" class="fw-semibold">Total Income</td><td colspan="3" class="text-end fw-semibold">₹ ${formatNumberToIndianReadble(trip.incomeDetails?.totalAmount ?? 0)}</td></tr><tr><td colspan="2" class="fw-semibold">Due Amount</td><td colspan="3" class="text-end fw-semibold">₹ ${formatNumberToIndianReadble(trip.incomeDetails?.dueAmount ?? 0)}</td></tr></tbody></table><table class="table border my-5"><thead><tr class="bg-primary-subtle"><th scope="col">Sr. No.</th><th scope="col">Title</th><th scope="col">Amount</th><th scope="col">Mode</th><th scope="col">Date</th></tr></thead><tbody>${trip.expenseDetails?.items?.map((item, index) => `<tr><td>${index + 1}</td><td>₹ ${item.title}</td><td>₹ ${formatNumberToIndianReadble(item.amount)}</td><td>₹ ${item.mode}</td><td>${reverseDateString(item.date)}</td></tr>`).join("\n")}<tr><td colspan="2" class="fw-semibold">Total Expense</td><td colspan="3" class="text-end fw-semibold">₹ ${formatNumberToIndianReadble(trip.expenseDetails?.totalAmount ?? 0)}</td></tr></tbody></table><div class="d-flex justify-content-between my-5"><div><h5 class="fw-semibold mb-4">Contact Us</h5><ul class="list-unstyled"><li class="d-flex align-items-center mb-1"><iconify-icon class="social-icon text-primary fs-5 me-2" icon="mdi:location"></iconify-icon>${user.companyDetails.address}</li><li class="d-flex align-items-center mb-1"><iconify-icon class="social-icon text-primary fs-5 me-2" icon="solar:phone-bold"></iconify-icon>+91 ${user.companyDetails.phone}</li><li class="d-flex align-items-center mb-1"><iconify-icon class="social-icon text-primary fs-5 me-2" icon="ic:baseline-email"></iconify-icon>${user.companyDetails.email}</li></ul></div><div><ul class="list-unstyled"><li><img src="${user.personalDetails.sign}" class="me-2" style="max-width:200px" alt="Sign"></li><li class="text-center">${user.personalDetails.firstName} ${user.personalDetails.lastName}</li></ul></div></div><div id="footer-bottom"><div class="border-top"><div class="row mt-3"><div class="col-md-6 text-md-end"><p><a href="https://templatesjungle.com/" target="_blank" class="text-decoration-none text-black-50">TemplatesJungle</a></p></div></div></div></div></div></section><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script><script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script></body></html>`
+}

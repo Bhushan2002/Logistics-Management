@@ -1,0 +1,14 @@
+service: accountSystem
+provider:
+  name: aws
+  runtime: nodejs18.x
+  memorySize: 2048
+  timeout: 10
+  region: ap-south-1
+
+functions:
+  app:
+    handler: dist/index.handler
+    events:
+      - http: ANY /
+      - http: 'ANY /{proxy+}'

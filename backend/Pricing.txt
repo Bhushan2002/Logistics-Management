@@ -1,0 +1,30 @@
+S3 Cloud Storage
+
+First 50 TB  => 0.025$ = 2.125 Rs
+
+For 1 TB => 2.125 / 50 = 0.0425 Rs
+
+For 1 GB => 0.0425 / 1000 => 0.0000425 Rs
+
+For 1MB => 0.0000425/1000 => 4.25 * 10^-8
+
+For 1 File => Per File 2.5MB => 0.0425 Rs
+
+
+AWS Lambda
+
+Request Count = 30 => 50 Per user
+
+Total Price => 85 Rs 
+
+Total Price PDF service => 5.1 Rs =>
+
+
+Total Calcualation For Lambda service  => $ 3.33 + $ 0.33 => $ 3.67 => 320 Rs per Month
+
+Total Calcualation For S3 PDF Service => $.00051 Per PDF => 0.05 Rs Per PDF 
+
+
+
+
+
